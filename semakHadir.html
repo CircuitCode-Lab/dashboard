@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Dashboard Pensyarah — Semakan Kehadiran</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#2563EB;--secondary:#06B6D4;--success:#10B981;--danger:#EF4444;--warning:#F59E0B;--dark:#1E293B;--dark2:#334155;--text:#F1F5F9;--muted:#94A3B8;--border:#475569;--card:#0F172A}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);min-height:100vh;color:var(--text)}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.header{text-align:center;padding:30px 0 25px}
+.header h1{font-size:2.2em;font-weight:800;letter-spacing:-1px}
+.header p{color:var(--muted);margin-top:6px}
+.card{background:var(--card);border-radius:20px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.4);border:1px solid var(--border);margin-bottom:24px}
+.login{max-width:420px;margin:0 auto}
+.section{background:var(--dark2);padding:24px;border-radius:15px;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:20px}
+label{display:block;margin-bottom:8px;font-weight:600;text-transform:uppercase;font-size:.85em;letter-spacing:.5px}
+input,select{width:100%;padding:13px 15px;border:2px solid var(--border);border-radius:12px;background:var(--dark);color:var(--text);font-size:1em;font-family:inherit}
+input:focus,select:focus{outline:none;border-color:var(--primary)}
+.btn{padding:13px 26px;border:none;border-radius:12px;font-size:.95em;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;font-family:inherit}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff}
+.btn-secondary{background:var(--dark2);color:var(--text);border:2px solid var(--border)}
+.btn-sm{padding:8px 14px;font-size:.8em}
+.buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:-6px 0 18px}
+.chip{background:var(--dark);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:20px;font-size:.8em;cursor:pointer;font-family:inherit}
+.chip:hover{border-color:var(--secondary)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
+.stat{background:var(--dark2);padding:20px;border-radius:15px;text-align:center}
+.stat-label{font-size:.8em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-size:2.2em;font-weight:800;font-family:'Space Mono',monospace}
+.ok{color:var(--success)}.bad{color:var(--danger)}
+.alert{padding:14px 18px;border-radius:12px;margin:16px 0;font-weight:600}
+.alert-info{background:rgba(37,99,235,.2);border:2px solid var(--primary);color:#93C5FD}
+.alert-success{background:rgba(16,185,129,.2);border:2px solid var(--success);color:var(--success)}
+.alert-danger{background:rgba(239,68,68,.2);border:2px solid var(--danger);color:#FCA5A5}
+.list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:28px 0 12px}
+.table-wrap{overflow-x:auto;border-radius:12px}
+table{width:100%;border-collapse:collapse;background:var(--dark2)}
+th{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:12px;text-align:left;font-weight:700;white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--border)}
+tbody tr:hover{background:rgba(37,99,235,.1)}
+a{color:var(--secondary)}
+.topbar{display:flex;justify-content:flex-end;margin-bottom:10px}
+.hidden{display:none!important}
+footer{text-align:center;padding:24px 20px;color:var(--muted);font-size:.9em}
+@media(max-width:768px){.header h1{font-size:1.6em}.card{padding:20px}.btn{width:100%}.btn-sm{width:auto}}
+@media print{body{background:#fff;color:#000}.card,.section,.stat,table{background:#fff;box-shadow:none;border-color:#ccc;color:#000}.no-print,footer{display:none!important}th{background:#ddd;color:#000}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>👨‍🏫 Dashboard Pensyarah</h1>
+    <p>Semakan Kehadiran Pelajar</p>
+  </div>
+
+  <!-- LOG MASUK -->
+  <div id="loginView" class="card login">
+    <h2 style="margin-bottom:20px">🔒 Log Masuk</h2>
+    <label for="pw">Kata Laluan</label>
+    <input type="password" id="pw" autocomplete="current-password" onkeydown="if(event.key==='Enter')logMasuk()">
+    <div style="margin-top:20px" class="buttons"><button class="btn btn-primary" id="btnLogin" onclick="logMasuk()">Masuk</button></div>
+    <div id="loginAlert"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="mainView" class="hidden">
+    <div class="topbar no-print"><button class="btn btn-secondary btn-sm" onclick="logKeluar()">🚪 Log Keluar</button></div>
+    <div class="card">
+      <div class="section no-print">
+        <h2 style="margin-bottom:20px">Tetapan Carian</h2>
+        <div class="grid">
+          <div><label for="fTarikh">📅 Tarikh</label><input type="date" id="fTarikh"></div>
+          <div><label for="fKelas">🎓 Kelas</label><select id="fKelas"></select></div>
+          <div><label for="fMula">⏰ Masa Mula</label><input type="time" id="fMula" value="00:00"></div>
+          <div><label for="fTamat">⏱️ Masa Tamat</label><input type="time" id="fTamat" value="23:59"></div>
+        </div>
+        <div class="chips">
+          <button class="chip" onclick="setMasa('08:00','10:00')">8–10 pg</button>
+          <button class="chip" onclick="setMasa('10:00','12:00')">10–12 tgh</button>
+          <button class="chip" onclick="setMasa('14:00','16:00')">2–4 ptg</button>
+          <button class="chip" onclick="setMasa('16:00','18:00')">4–6 ptg</button>
+          <button class="chip" onclick="setMasa('00:00','23:59')">Sepanjang hari</button>
+        </div>
+        <div class="buttons">
+          <button class="btn btn-primary" id="btnCari" onclick="cari()">🔍 Cari Kehadiran</button>
+          <button class="btn btn-secondary" onclick="hariIni()">📅 Hari Ini</button>
+        </div>
+      </div>
+      <div id="alertDiv"></div>
+      <div id="result" class="hidden">
+        <div class="stats" id="stats"></div>
+        <div id="info"></div>
+        <div id="lists"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <p>Sistem ini dibangunkan oleh <strong style="color:var(--text)">Wan Fazlini Idayu</strong> dengan bantuan AI</p>
+  <p style="margin-top:5px;font-size:.85em;opacity:.7">© 2026 Sistem Kehadiran Pelajar</p>
+</footer>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtJhwz-IfkRXqLDLlWWoGBphXmgneyZAiS0hJzqii-hoQjXCXJGMR6QhJRh9cCOPJHiw/exec';
+let PW = '';
+let DATA = null;
+const $ = id => document.getElementById(id);
+
+function esc(s){return String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function alertBox(el,type,msg){$(el).innerHTML = msg ? `<div class="alert alert-${type}">${msg}</div>` : '';}
+
+// Tarikh hari ini ikut jam peranti (tiada toISOString — itu UTC dan boleh jadi semalam sebelum 8 pagi)
+function hariIni(){
+  const d = new Date();
+  $('fTarikh').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function setMasa(a,b){$('fMula').value=a;$('fTamat').value=b;}
+function fmtTarikh(iso){const [y,m,d]=iso.split('-');return `${d}/${m}/${y}`;}
+
+async function api(params){
+  const q = new URLSearchParams({action:'semak', pw:PW, ...params});
+  const res = await fetch(`${SCRIPT_URL}?${q}`);
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.error || 'Ralat tidak diketahui');
+  return data;
+}
+
+function isiKelas(list){
+  const sel = $('fKelas'), lama = sel.value || (()=>{try{return localStorage.getItem('pensyarah_kelas')}catch(e){return ''}})();
+  sel.innerHTML = list.map(k=>`<option value="${esc(k)}">${esc(k)}</option>`).join('');
+  if (lama && list.includes(lama)) sel.value = lama;
+}
+
+async function logMasuk(simpan){
+  PW = simpan || $('pw').value;
+  if (!PW){alertBox('loginAlert','danger','⚠️ Sila masukkan kata laluan.');return;}
+  $('btnLogin').disabled = true;
+  alertBox('loginAlert','info','⏳ Menyemak...');
+  try{
+    const d = await api({mode:'login'});
+    try{sessionStorage.setItem('pensyarah_pw',PW);}catch(e){}
+    isiKelas(d.kelasList || []);
+    $('loginView').classList.add('hidden');
+    $('mainView').classList.remove('hidden');
+    alertBox('loginAlert','','');
+  }catch(e){
+    PW=''; try{sessionStorage.removeItem('pensyarah_pw');}catch(_){}
+    alertBox('loginAlert','danger','❌ '+esc(e.message));
+  }finally{$('btnLogin').disabled=false;}
+}
+
+function logKeluar(){
+  PW=''; DATA=null;
+  try{sessionStorage.removeItem('pensyarah_pw');}catch(e){}
+  $('pw').value=''; $('result').classList.add('hidden'); alertBox('alertDiv','','');
+  $('mainView').classList.add('hidden'); $('loginView').classList.remove('hidden');
+}
+
+async function cari(){
+  const tarikh=$('fTarikh').value, kelas=$('fKelas').value, mula=$('fMula').value, tamat=$('fTamat').value;
+  if(!tarikh||!kelas||!mula||!tamat){alertBox('alertDiv','danger','⚠️ Sila lengkapkan semua maklumat!');return;}
+  if(mula>tamat){alertBox('alertDiv','danger','⚠️ Masa mula mesti sebelum masa tamat.');return;}
+  try{localStorage.setItem('pensyarah_kelas',kelas);}catch(e){}
+  $('btnCari').disabled=true; $('result').classList.add('hidden');
+  alertBox('alertDiv','info','⏳ Sedang memproses data...');
+  try{
+    // Tarikh & masa dihantar sebagai teks (YYYY-MM-DD, HH:mm) — tiada penukaran zon waktu
+    DATA = await api({tarikh, kelas, mula, tamat});
+    papar(DATA); alertBox('alertDiv','','');
+    $('result').classList.remove('hidden');
+  }catch(e){
+    if(/kata laluan/i.test(e.message)){logKeluar();alertBox('loginAlert','danger','❌ '+esc(e.message));}
+    else alertBox('alertDiv','danger','❌ Ralat: '+esc(e.message));
+  }finally{$('btnCari').disabled=false;}
+}
+
+function papar(d){
+  const nH=d.hadir.length, nT=d.tidakHadir.length, pct=d.jumlah?Math.round(nH/d.jumlah*100):0;
+  $('stats').innerHTML=`
+    <div class="stat"><div class="stat-label">Jumlah Pelajar</div><div class="stat-value">${d.jumlah}</div></div>
+    <div class="stat"><div class="stat-label">Hadir</div><div class="stat-value ok">${nH}</div></div>
+    <div class="stat"><div class="stat-label">Tidak Hadir</div><div class="stat-value bad">${nT}</div></div>
+    <div class="stat"><div class="stat-label">Peratus Hadir</div><div class="stat-value">${pct}%</div></div>`;
+  $('info').innerHTML=`<div class="alert alert-info">📅 <strong>${fmtTarikh(d.tarikh)}</strong> &nbsp; 🎓 <strong>${esc(d.kelas)}</strong> &nbsp; ⏰ <strong>${d.mula} – ${d.tamat}</strong></div>`;
+
+  let h='';
+  if(d.jumlah===0){
+    h+=`<div class="alert alert-danger">Tiada pelajar berdaftar untuk kelas ${esc(d.kelas)}.</div>`;
+  }else if(nT>0){
+    h+=`<div class="list-head"><h3 class="bad">❌ Pelajar Tidak Hadir (${nT})</h3>
+        <div class="no-print buttons"><button class="btn btn-secondary btn-sm" onclick="salinTidakHadir()">📋 Salin Senarai</button>
+        <button class="btn btn-secondary btn-sm" onclick="csv()">⬇️ CSV</button>
+        <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Cetak</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Bil</th><th>ID Pelajar</th><th>Nama Pelajar</th></tr></thead><tbody>
+        ${d.tidakHadir.map((p,i)=>`<tr><td>${i+1}</td><td><strong>${esc(p.id)}</strong></td><td>${esc(p.nama)}</td></tr>`).join('')}
+        </tbody></table></div>`;
+  }else{
+    h+=`<div class="alert alert-success">✅ <strong>Tahniah!</strong> Semua pelajar hadir dalam julat masa ini.</div>
+        <div class="no-print buttons"><button class="btn btn-secondary btn-sm" onclick="csv()">⬇️ CSV</button></div>`;
+  }
+  if(nH>0){
+    h+=`<div class="list-head"><h3 class="ok">✅ Pelajar Hadir (${nH})</h3></div>
+        <div class="table-wrap"><table><thead><tr><th>Bil</th><th>ID Pelajar</th><th>Nama Pelajar</th><th>Masa</th><th class="no-print">Lokasi</th><th class="no-print">Gambar</th></tr></thead><tbody>
+        ${d.hadir.map((p,i)=>`<tr><td>${i+1}</td><td><strong>${esc(p.id)}</strong></td><td>${esc(p.nama)}</td>
+          <td style="font-family:'Space Mono',monospace">${esc(p.masa)}</td>
+          <td class="no-print">${/^https?:\/\//.test(p.lokasi)?`<a href="${esc(p.lokasi)}" target="_blank" rel="noopener">📍 Peta</a>`:'-'}</td>
+          <td class="no-print">${/^https?:\/\//.test(p.gambar)?`<a href="${esc(p.gambar)}" target="_blank" rel="noopener">🖼️ Lihat</a>`:'-'}</td></tr>`).join('')}
+        </tbody></table></div>`;
+  }
+  $('lists').innerHTML=h;
+}
+
+function salinTidakHadir(){
+  if(!DATA)return;
+  const t=`Tidak hadir ${DATA.kelas} (${fmtTarikh(DATA.tarikh)}, ${DATA.mula}–${DATA.tamat}):\n`+
+    DATA.tidakHadir.map((p,i)=>`${i+1}. ${p.nama} (${p.id})`).join('\n');
+  navigator.clipboard.writeText(t).then(()=>alertBox('alertDiv','success','📋 Senarai disalin.'),()=>alertBox('alertDiv','danger','Tidak dapat menyalin.'));
+}
+
+function csv(){
+  if(!DATA)return;
+  const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const rows=[['Bil','ID','Nama','Kelas','Status','Masa']];
+  DATA.tidakHadir.forEach((p,i)=>rows.push([i+1,p.id,p.nama,DATA.kelas,'Tidak Hadir','']));
+  DATA.hadir.forEach((p,i)=>rows.push([DATA.tidakHadir.length+i+1,p.id,p.nama,DATA.kelas,'Hadir',p.masa]));
+  const blob=new Blob(['﻿'+rows.map(r=>r.map(q).join(',')).join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`Kehadiran_${DATA.kelas}_${DATA.tarikh}.csv`;a.click();URL.revokeObjectURL(a.href);
+}
+
+hariIni();
+try{const s=sessionStorage.getItem('pensyarah_pw'); if(s) logMasuk(s);}catch(e){}
+</script>
+</body>
+</html>
