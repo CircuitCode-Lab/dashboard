@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Dashboard Pensyarah — CircuitCode Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#2563EB;--secondary:#06B6D4;--success:#10B981;--warning:#F59E0B;--text:#F1F5F9;--muted:#94A3B8;--border:#475569;--card:#0F172A;--card2:#1E293B}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);min-height:100vh;color:var(--text);display:flex;flex-direction:column}
+.container{max-width:1000px;margin:0 auto;padding:20px;flex:1;width:100%}
+.header{text-align:center;padding:48px 0 36px}
+.header h1{font-size:2.4em;font-weight:800;letter-spacing:-1px}
+.header p{color:var(--muted);margin-top:8px;font-size:1.05em}
+.date{display:inline-block;margin-top:16px;padding:6px 14px;border:1px solid var(--border);border-radius:20px;color:var(--muted);font-size:.85em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
+.tile{position:relative;display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:30px;text-decoration:none;color:var(--text);box-shadow:0 20px 50px rgba(0,0,0,.35);transition:transform .2s,border-color .2s,box-shadow .2s}
+a.tile:hover,a.tile:focus-visible{transform:translateY(-4px);border-color:var(--secondary);box-shadow:0 24px 60px rgba(6,182,212,.2);outline:none}
+.icon{width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8em;background:linear-gradient(135deg,var(--primary),var(--secondary))}
+.tile h2{font-size:1.3em;font-weight:700}
+.tile p{color:var(--muted);font-size:.95em;line-height:1.5;flex:1}
+.go{font-weight:700;font-size:.9em;color:var(--secondary);text-transform:uppercase;letter-spacing:.5px}
+.tile.soon{opacity:.55;cursor:default}
+.tile.soon .icon{background:var(--card2);border:1px dashed var(--border)}
+.badge{position:absolute;top:18px;right:18px;font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 10px;border-radius:20px;background:rgba(245,158,11,.15);color:var(--warning);border:1px solid rgba(245,158,11,.4)}
+.note{margin-top:30px;text-align:center;color:var(--muted);font-size:.85em}
+footer{text-align:center;padding:30px 20px;color:var(--muted);font-size:.9em}
+@media(max-width:600px){.header{padding:30px 0 24px}.header h1{font-size:1.8em}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>👨‍🏫 Dashboard Pensyarah</h1>
+    <p>Pusat sistem pengurusan pensyarah — CircuitCode Lab</p>
+    <div class="date" id="tarikh"></div>
+  </div>
+
+  <div class="grid">
+    <a class="tile" href="semakHadir.html">
+      <div class="icon">📋</div>
+      <h2>Semak Kehadiran</h2>
+      <p>Lihat senarai pelajar hadir dan tidak hadir mengikut tarikh, kelas dan julat masa. Salin senarai, muat turun CSV atau cetak.</p>
+      <span class="go">Buka →</span>
+    </a>
+
+    <div class="tile soon" aria-disabled="true">
+      <span class="badge">Akan Datang</span>
+      <div class="icon">🧪</div>
+      <h2>Semak PW</h2>
+      <p>Semakan penghantaran dan markah Practical Work (PW) pelajar.</p>
+      <span class="go" style="color:var(--muted)">Belum tersedia</span>
+    </div>
+  </div>
+
+  <p class="note">🔒 Setiap sistem memerlukan kata laluan pensyarah.</p>
+</div>
+<footer>
+  <p>Sistem ini dibangunkan oleh <strong style="color:var(--text)">Wan Fazlini Idayu</strong> dengan bantuan AI</p>
+  <p style="margin-top:5px;font-size:.85em;opacity:.7">© 2026 CircuitCode Lab</p>
+</footer>
+<script>
+document.getElementById('tarikh').textContent = new Date().toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+</script>
+</body>
+</html>
