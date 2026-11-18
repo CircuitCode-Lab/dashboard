@@ -6,63 +6,162 @@
 <meta name="robots" content="noindex">
 <title>Dashboard Pensyarah — CircuitCode Lab</title>
 <link rel="icon" type="image/png" href="favicon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#1e88c8">
+<script>
+/* Tetapan tema dikongsi oleh semua halaman dashboard: 'auto' | 'light' | 'dark' */
+(function(){var t='auto';try{t=localStorage.getItem('cc_tema')||'auto'}catch(e){}
+var dark=t==='dark'||(t==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
+document.documentElement.dataset.theme=dark?'dark':'light';document.documentElement.dataset.pref=t;})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#2563EB;--secondary:#06B6D4;--success:#10B981;--warning:#F59E0B;--text:#F1F5F9;--muted:#94A3B8;--border:#475569;--card:#0F172A;--card2:#1E293B}
+:root{
+  --brand:#1e88c8;--brand2:#06B6D4;--ok:#10B981;--warn:#F59E0B;
+  --bg:#F3F7FB;--surface:#FFFFFF;--surface2:#F5F8FB;
+  --text:#0F1E2E;--muted:#5B6B7C;--border:#DCE5EE;--shadow:0 1px 2px rgba(15,30,46,.06),0 8px 24px rgba(15,30,46,.06);
+  --shadow-hover:0 2px 4px rgba(15,30,46,.08),0 16px 40px rgba(30,136,200,.16);
+  --chip:#E8F3FB;--chip-text:#145F8C;--glow1:rgba(30,136,200,.14);--glow2:rgba(6,182,212,.10);
+}
+[data-theme="dark"]{
+  --bg:#0B1220;--surface:#131D30;--surface2:#1A2640;
+  --text:#EAF1F8;--muted:#93A4B8;--border:#26344D;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  --shadow-hover:0 2px 4px rgba(0,0,0,.3),0 16px 40px rgba(6,182,212,.18);
+  --chip:#16324A;--chip-text:#8FD3F5;--glow1:rgba(30,136,200,.22);--glow2:rgba(6,182,212,.12);
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);min-height:100vh;color:var(--text);display:flex;flex-direction:column}
-.container{max-width:1000px;margin:0 auto;padding:20px;flex:1;width:100%}
-.header{text-align:center;padding:48px 0 36px}
-.header h1{font-size:2.4em;font-weight:800;letter-spacing:-1px}
-.header p{color:var(--muted);margin-top:8px;font-size:1.05em}
-.date{display:inline-block;margin-top:16px;padding:6px 14px;border:1px solid var(--border);border-radius:20px;color:var(--muted);font-size:.85em}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
-.tile{position:relative;display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:30px;text-decoration:none;color:var(--text);box-shadow:0 20px 50px rgba(0,0,0,.35);transition:transform .2s,border-color .2s,box-shadow .2s}
-a.tile:hover,a.tile:focus-visible{transform:translateY(-4px);border-color:var(--secondary);box-shadow:0 24px 60px rgba(6,182,212,.2);outline:none}
-.icon{width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8em;background:linear-gradient(135deg,var(--primary),var(--secondary))}
-.tile h2{font-size:1.3em;font-weight:700}
-.tile p{color:var(--muted);font-size:.95em;line-height:1.5;flex:1}
-.go{font-weight:700;font-size:.9em;color:var(--secondary);text-transform:uppercase;letter-spacing:.5px}
-.tile.soon{opacity:.55;cursor:default}
-.tile.soon .icon{background:var(--card2);border:1px dashed var(--border)}
-.badge{position:absolute;top:18px;right:18px;font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 10px;border-radius:20px;background:rgba(245,158,11,.15);color:var(--warning);border:1px solid rgba(245,158,11,.4)}
-.note{margin-top:30px;text-align:center;color:var(--muted);font-size:.85em}
-footer{text-align:center;padding:30px 20px;color:var(--muted);font-size:.9em}
-@media(max-width:600px){.header{padding:30px 0 24px}.header h1{font-size:1.8em}}
+html{color-scheme:light}[data-theme="dark"]{color-scheme:dark}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .25s,color .25s}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(900px 420px at 10% -10%,var(--glow1),transparent 70%),
+             radial-gradient(700px 380px at 100% 0%,var(--glow2),transparent 70%)}
+
+/* Bar atas */
+.topbar{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:var(--bg);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--border)}
+.topbar-in{max-width:1080px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;font-weight:800;letter-spacing:-.3px}
+.brand img{width:36px;height:36px;border-radius:10px}
+.brand small{display:block;font-weight:600;font-size:.72em;color:var(--muted);letter-spacing:0}
+.spacer{flex:1}
+.theme{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:3px;gap:2px}
+.theme button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:.82em;font-weight:600;padding:7px 11px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.theme button:hover{color:var(--text)}
+.theme button[aria-pressed="true"]{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.theme svg{width:16px;height:16px}
+
+/* Kandungan */
+.wrap{max-width:1080px;margin:0 auto;padding:36px 20px 20px;flex:1;width:100%}
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+.hero h1{font-size:clamp(1.7em,3.6vw,2.4em);font-weight:800;letter-spacing:-1px;line-height:1.15}
+.hero p{color:var(--muted);margin-top:6px}
+.today{display:flex;gap:10px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:8px 14px;font-size:.88em;font-weight:600;box-shadow:var(--shadow)}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(16,185,129,.25)}
+#jam{font-variant-numeric:tabular-nums}
+
+.section-title{font-size:.78em;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:8px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.tile{position:relative;display:flex;flex-direction:column;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px 24px 20px 28px;text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s,border-color .18s;overflow:hidden}
+.tile::after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+.tile:hover,.tile:focus-visible{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:var(--accent);outline:none}
+.tile-head{display:flex;align-items:center;gap:14px}
+.icon{width:52px;height:52px;flex:none;border-radius:14px;display:grid;place-items:center;font-size:1.6em;background:var(--accent-soft)}
+.tile h2{font-size:1.18em;font-weight:700}
+.tag{display:inline-block;margin-top:3px;font-size:.72em;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--chip);color:var(--chip-text)}
+.tile p{color:var(--muted);font-size:.93em;line-height:1.55;flex:1}
+.go{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border);font-weight:700;font-size:.88em;color:var(--accent)}
+.go span:last-child{transition:transform .18s}
+.tile:hover .go span:last-child{transform:translateX(4px)}
+.t-hadir{--accent:#1e88c8;--accent-soft:rgba(30,136,200,.14)}
+.t-pw{--accent:#0EA371;--accent-soft:rgba(16,185,129,.14)}
+
+.note{display:flex;align-items:center;gap:10px;margin-top:22px;padding:14px 16px;border-radius:14px;background:var(--surface2);border:1px dashed var(--border);color:var(--muted);font-size:.88em}
+
+footer{text-align:center;padding:28px 20px;color:var(--muted);font-size:.85em;line-height:1.7}
+footer strong{color:var(--text)}
+@media(max-width:560px){
+  .theme button span{display:none}.theme button{padding:8px}
+  .brand small{display:none}
+  .wrap{padding-top:24px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1>👨‍🏫 Dashboard Pensyarah</h1>
-    <p>Pusat sistem pengurusan pensyarah — CircuitCode Lab</p>
-    <div class="date" id="tarikh"></div>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="./"><img src="icon-192.png" alt=""><div>Dashboard Pensyarah<small>CircuitCode Lab · JKE PKB</small></div></a>
+    <div class="spacer"></div>
+    <div class="theme" role="group" aria-label="Tema paparan">
+      <button data-t="light" aria-pressed="false" title="Cerah"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Cerah</span></button>
+      <button data-t="dark" aria-pressed="false" title="Gelap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span>Gelap</span></button>
+      <button data-t="auto" aria-pressed="false" title="Ikut tetapan peranti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span>Auto</span></button>
+    </div>
   </div>
+</header>
 
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1 id="salam">Selamat datang 👋</h1>
+      <p>Pilih sistem yang ingin digunakan.</p>
+    </div>
+    <div class="today">
+      <span class="pill">📅 <span id="tarikh"></span></span>
+      <span class="pill"><span class="dot"></span><span id="jam"></span></span>
+    </div>
+  </section>
+
+  <div class="section-title">Sistem Pensyarah</div>
   <div class="grid">
-    <a class="tile" href="semakHadir.html">
-      <div class="icon">📋</div>
-      <h2>Semak Kehadiran</h2>
-      <p>Lihat senarai pelajar hadir dan tidak hadir mengikut tarikh, kelas dan julat masa. Salin senarai, muat turun CSV atau cetak.</p>
-      <span class="go">Buka →</span>
+    <a class="tile t-hadir" href="semakHadir.html">
+      <div class="tile-head">
+        <div class="icon">📋</div>
+        <div><h2>Semak Kehadiran</h2><span class="tag">Sistem Kehadiran Pelajar</span></div>
+      </div>
+      <p>Senarai pelajar hadir dan tidak hadir mengikut tarikh, kelas dan julat masa. Salin senarai, muat turun CSV atau cetak.</p>
+      <div class="go"><span>Buka sistem</span><span>→</span></div>
     </a>
 
-    <a class="tile" href="https://script.google.com/macros/s/AKfycbxQU5YHWNJ8TzcEE-g60AhIDCPG1N-lRVuNcVDIbBELSQJD2V-7_gAlMdgFeovYeMSr1Q/exec?page=pensyarah" target="_blank" rel="noopener">
-      <div class="icon">🧪</div>
-      <h2>Semak PW</h2>
+    <a class="tile t-pw" href="https://script.google.com/macros/s/AKfycbxQU5YHWNJ8TzcEE-g60AhIDCPG1N-lRVuNcVDIbBELSQJD2V-7_gAlMdgFeovYeMSr1Q/exec?page=pensyarah" target="_blank" rel="noopener">
+      <div class="tile-head">
+        <div class="icon">🧪</div>
+        <div><h2>Semak PW</h2><span class="tag">Sistem Lab · DEC20313</span></div>
+      </div>
       <p>Semakan penghantaran dan markah Practical Work (PW) pelajar.</p>
-      <span class="go">Buka ↗</span>
+      <div class="go"><span>Buka di tab baru</span><span>↗</span></div>
     </a>
   </div>
 
-  <p class="note">🔒 Setiap sistem memerlukan kata laluan pensyarah.</p>
-</div>
+  <div class="note">🔒 Setiap sistem memerlukan kata laluan pensyarah. Pilihan tema disimpan pada peranti ini.</div>
+</main>
+
 <footer>
-  <p>Sistem ini dibangunkan oleh <strong style="color:var(--text)">Wan Fazlini Idayu</strong> dengan bantuan AI</p>
-  <p style="margin-top:5px;font-size:.85em;opacity:.7">© 2026 CircuitCode Lab</p>
+  Sistem ini dibangunkan oleh <strong>Wan Fazlini Idayu</strong> dengan bantuan AI<br>
+  <span style="opacity:.75">© 2026 CircuitCode Lab</span>
 </footer>
+
 <script>
-document.getElementById('tarikh').textContent = new Date().toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+// ---- Tema ----
+const mq = window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
+function applyTema(t){
+  const dark = t==='dark' || (t==='auto' && mq && mq.matches);
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  document.documentElement.dataset.pref = t;
+  document.querySelectorAll('.theme button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.t===t)));
+}
+function setTema(t){ try{localStorage.setItem('cc_tema',t);}catch(e){} applyTema(t); }
+document.querySelectorAll('.theme button').forEach(b=>b.addEventListener('click',()=>setTema(b.dataset.t)));
+if (mq && mq.addEventListener) mq.addEventListener('change',()=>{ if(document.documentElement.dataset.pref==='auto') applyTema('auto'); });
+applyTema(document.documentElement.dataset.pref || 'auto');
+
+// ---- Salam, tarikh & jam ----
+function kemaskini(){
+  const d = new Date(), h = d.getHours();
+  const salam = h<12 ? 'Selamat pagi' : h<14 ? 'Selamat tengah hari' : h<19 ? 'Selamat petang' : 'Selamat malam';
+  document.getElementById('salam').textContent = salam + ' 👋';
+  document.getElementById('tarikh').textContent = d.toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('jam').textContent = d.toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
+}
+kemaskini(); setInterval(kemaskini, 15000);
 </script>
 </body>
 </html>

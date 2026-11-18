@@ -6,16 +6,22 @@
 <meta name="robots" content="noindex">
 <title>Dashboard Pensyarah — Semakan Kehadiran</title>
 <link rel="icon" type="image/png" href="favicon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<script>(function(){var t='auto';try{t=localStorage.getItem('cc_tema')||'auto'}catch(e){}
+var dark=t==='dark'||(t==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);
+document.documentElement.dataset.theme=dark?'dark':'light';document.documentElement.dataset.pref=t;})();</script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#2563EB;--secondary:#06B6D4;--success:#10B981;--danger:#EF4444;--warning:#F59E0B;--dark:#1E293B;--dark2:#334155;--text:#F1F5F9;--muted:#94A3B8;--border:#475569;--card:#0F172A}
+:root{--primary:#2563EB;--secondary:#06B6D4;--success:#10B981;--danger:#EF4444;--warning:#F59E0B;--dark:#1E293B;--dark2:#334155;--text:#F1F5F9;--muted:#94A3B8;--border:#475569;--card:#0F172A;--bgimg:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);--info-text:#93C5FD;--danger-text:#FCA5A5;--shadow:0 20px 60px rgba(0,0,0,.4)}
+[data-theme="light"]{--primary:#1e88c8;--secondary:#06B6D4;--success:#0E9F6E;--danger:#DC2626;--dark:#FFFFFF;--dark2:#F1F5F9;--text:#0F1E2E;--muted:#5B6B7C;--border:#D6E0EA;--card:#FFFFFF;--bgimg:linear-gradient(135deg,#F3F7FB 0%,#EAF2F9 100%);--info-text:#145F8C;--danger-text:#B91C1C;--shadow:0 1px 2px rgba(15,30,46,.06),0 8px 24px rgba(15,30,46,.07)}
+html{color-scheme:dark}[data-theme="light"]{color-scheme:light}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);min-height:100vh;color:var(--text)}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bgimg);min-height:100vh;color:var(--text);transition:background .25s,color .25s}
 .container{max-width:1200px;margin:0 auto;padding:20px}
 .header{text-align:center;padding:30px 0 25px}
 .header h1{font-size:2.2em;font-weight:800;letter-spacing:-1px}
 .header p{color:var(--muted);margin-top:6px}
-.card{background:var(--card);border-radius:20px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.4);border:1px solid var(--border);margin-bottom:24px}
+.card{background:var(--card);border-radius:20px;padding:32px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:24px}
 .login{max-width:420px;margin:0 auto}
 .section{background:var(--dark2);padding:24px;border-radius:15px;margin-bottom:24px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:20px}
@@ -37,9 +43,9 @@ input:focus,select:focus{outline:none;border-color:var(--primary)}
 .stat-value{font-size:2.2em;font-weight:800;font-family:'Space Mono',monospace}
 .ok{color:var(--success)}.bad{color:var(--danger)}
 .alert{padding:14px 18px;border-radius:12px;margin:16px 0;font-weight:600}
-.alert-info{background:rgba(37,99,235,.2);border:2px solid var(--primary);color:#93C5FD}
+.alert-info{background:rgba(37,99,235,.2);border:2px solid var(--primary);color:var(--info-text)}
 .alert-success{background:rgba(16,185,129,.2);border:2px solid var(--success);color:var(--success)}
-.alert-danger{background:rgba(239,68,68,.2);border:2px solid var(--danger);color:#FCA5A5}
+.alert-danger{background:rgba(239,68,68,.2);border:2px solid var(--danger);color:var(--danger-text)}
 .list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:28px 0 12px}
 .table-wrap{overflow-x:auto;border-radius:12px}
 table{width:100%;border-collapse:collapse;background:var(--dark2)}
@@ -52,9 +58,13 @@ a{color:var(--secondary)}
 footer{text-align:center;padding:24px 20px;color:var(--muted);font-size:.9em}
 @media(max-width:768px){.header h1{font-size:1.6em}.card{padding:20px}.btn{width:100%}.btn-sm{width:auto}}
 @media print{body{background:#fff;color:#000}.card,.section,.stat,table{background:#fff;box-shadow:none;border-color:#ccc;color:#000}.no-print,footer{display:none!important}th{background:#ddd;color:#000}}
+.tema-btn{position:fixed;top:14px;right:14px;z-index:20;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font:inherit;font-size:.82em;font-weight:600;cursor:pointer;box-shadow:var(--shadow)}
+.tema-btn:hover{border-color:var(--secondary)}
+@media print{.tema-btn{display:none}}
 </style>
 </head>
 <body>
+<button class="tema-btn no-print" id="temaBtn" onclick="tukarTema()" title="Tukar tema"></button>
 <div class="container">
   <div class="header">
     <h1>👨‍🏫 Dashboard Pensyarah</h1>
@@ -242,6 +252,14 @@ function csv(){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=`Kehadiran_${DATA.kelas}_${DATA.tarikh}.csv`;a.click();URL.revokeObjectURL(a.href);
 }
+
+// ---- Tema (dikongsi dengan halaman Dashboard) ----
+const TEMA_LABEL={light:'☀️ Cerah',dark:'🌙 Gelap',auto:'🖥️ Auto'};
+const mqT=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
+function applyTema(t){const dk=t==='dark'||(t==='auto'&&mqT&&mqT.matches);document.documentElement.dataset.theme=dk?'dark':'light';document.documentElement.dataset.pref=t;$('temaBtn').textContent=TEMA_LABEL[t];}
+function tukarTema(){const urutan=['light','dark','auto'];const t=urutan[(urutan.indexOf(document.documentElement.dataset.pref||'auto')+1)%3];try{localStorage.setItem('cc_tema',t);}catch(e){}applyTema(t);}
+if(mqT&&mqT.addEventListener)mqT.addEventListener('change',()=>{if(document.documentElement.dataset.pref==='auto')applyTema('auto');});
+applyTema(document.documentElement.dataset.pref||'auto');
 
 hariIni();
 try{const s=sessionStorage.getItem('pensyarah_pw'); if(s) logMasuk(s);}catch(e){}
